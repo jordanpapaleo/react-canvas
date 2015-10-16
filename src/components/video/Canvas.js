@@ -4,6 +4,8 @@ class Canvas extends Component {
   constructor (props) {
     super(props)
 
+    this.state = {}
+
 
     /*
     - Canvas width and height same as video and passed in as props
@@ -13,20 +15,46 @@ class Canvas extends Component {
     */
   }
 
-  componentWillReceiveProps (props) {
-    const video = (this.props.video) ? this.props.video.getDOMNode() : null;
+  componentDidMount () {
     const canvas = this.refs['canvas'].getDOMNode()
     const context = canvas.getContext('2d')
 
-    if (context && video) {
-      context.fillRect(0, 0, this.props.canvasWidth, this.props.canvasHeight)
-      context.drawImage(video, 0, 0, this.props.canvasWidth, this.props.canvasHeight)
+    this.setState({
+      canvas,
+      context,
+      width: canvas.clientWidth,
+      height: canvas.clientHeight,
+      x: canvas.clientWidth / 2,
+      y: canvas.clientHeight / 2
+    })
+  }
+
+  componentWillReceiveProps (props) {
+    // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation
+    console.log('Canvas', props.inView)
+
+    if(!this.state.video && this.props.video) {
+      this.setState({
+        video: this.props.video.getDOMNode()
+      })
+    }
+
+    if(this.state.video && this.props.inView) {
+      const { context, video, width, height, x, y } = this.state
+
+      let r = this.props.inView
+
+      context.save()
+      context.drawImage(video, 0, 0, width, height)
+      context.globalCompositeOperation = 'destination-in'
+      context.beginPath()
+      context.arc(x, y, r, 0, Math.PI * 2, false)
+      context.fill()
+      context.restore()
     }
   }
 
   render () {
-    console.log('this.props', this.props)
-
     const style = {
       position: (this.props.isPlaying) ? 'fixed' : 'absolute',
       top: this.props.offsetY,

@@ -28,10 +28,12 @@ class VideoController extends Component {
 
     this.onScroll = this.onScroll.bind(this)
     this.screenShotVideo = this.screenShotVideo.bind(this)
+    this.canvasScrolling = this.canvasScrolling.bind(this)
   }
 
   componentWillMount () {
     PositionObserver.subscribe((positions) => {
+      console.log('VideoController', positions)
       this.setState({positions})
     })
 
@@ -57,6 +59,7 @@ class VideoController extends Component {
     window.removeEventListener('scroll', this.onScroll, false)
   }
 
+  // bottomBoundary is optional
   screenShotVideo (bottomBoundary) {
     let vidComponent = this.refs['video-componet']
     let videoNode = vidComponent.refs.video.getDOMNode()
@@ -74,25 +77,55 @@ class VideoController extends Component {
     }
   }
 
+  canvasScrolling (scrollTop) {
+    if(!this.state.positions) {
+      return
+    }
+
+    const scrollBottom = scrollTop + window.innerHeight
+    const topVidController = this.state.positions.videoController
+
+    if (scrollBottom > topVidController) {
+      let scrolledIntoView = scrollBottom - topVidController
+      this.setState({
+        canvasInView: scrolledIntoView
+      })
+    } else {
+      this.setState({
+        canvasInView: 0
+      })
+    }
+  }
+
   onScroll (e) {
     let scrollTop = ViewportMetrics.currentScrollTop
+    this.canvasScrolling(scrollTop)
+
+    this.setState({ scrollTop })
+
     let topBoundary = this.state.positions.videoController
     let bottomBoundary = this.state.positions.touch - this.state.windowHeight
 
     if (scrollTop > topBoundary && scrollTop < bottomBoundary) {
+      // Only hit play once
       if(!this.state.isPlaying) {
         this.setState({
           isPlaying: true
         })
       }
     } else {
-      this.setState({
-        isPlaying: false
-      })
+      // only pause once
+      if(this.state.isPlaying) {
+        this.setState({
+          isPlaying: false
+        })
+      }
 
       if(scrollTop >= bottomBoundary) {
+        // Changes the absolute position of the canvas
         this.screenShotVideo(bottomBoundary)
       } else {
+        // Uses the default 0 absolute position for canvas
         this.screenShotVideo()
       }
     }
@@ -107,7 +140,7 @@ class VideoController extends Component {
 
     return (
       <div ref='videoController' className='video-controller' style={style}>
-        <Canvas video={this.state.video} canvasWidth={1320} canvasHeight={724} offsetY={this.state.offsetY} isPlaying={this.state.isPlaying} />
+        <Canvas video={this.state.video} inView={this.state.canvasInView} canvasWidth={1320} canvasHeight={724} offsetY={this.state.offsetY} isPlaying={this.state.isPlaying} />
         <Video ref='video-componet' isPlaying={this.state.isPlaying} />
 
         {this.state.statements.map((statement) => {
