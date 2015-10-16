@@ -31,8 +31,6 @@ class Canvas extends Component {
 
   componentWillReceiveProps (props) {
     // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation
-    console.log('Canvas', props.inView)
-
     if(!this.state.video && this.props.video) {
       this.setState({
         video: this.props.video.getDOMNode()

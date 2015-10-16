@@ -11,6 +11,7 @@ class Statement extends Component {
 
   constructor (props) {
     super(props)
+    console.log(props)
   }
 
   render () {
@@ -19,25 +20,24 @@ class Statement extends Component {
       marginLeft: 0,
       position: 'fixed',
       zIndex: 2,
-      top: 0,
+      top: window.innerHeight * 1.25,
       width: '100%',
-      marginTop: '-200px',
-      visibility: 'hidden'
+      // visibility: 'hidden'
     }
+
+    let blar = window.innerWidth / 4
+
 
     const statementStyle = {
       position: 'absolute',
-      width: 620,
-      marginLeft: '-310px',
+      width: blar,
+      marginLeft: `-${blar / 2}`,
       left: '50%'
     }
 
-    // Individually move a statement into play
-    // visibility: visible; transform: translate3d(0px, 468.505px, 0px);
-
     return (
-      <div className='overlay'>
-        <div className='statement'>{this.props.message}</div>
+      <div className='overlay' style={overlayStyle}>
+        <div className='statement' style={statementStyle}>{this.props.text}</div>
       </div>
     )
   }

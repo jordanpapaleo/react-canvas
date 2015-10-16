@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+// import TimelineMax from 'gsap/src/minified/TimelineMax.min.js'
+import TimelineMax from 'gsap/src/uncompressed/TimelineMax.js'
 import PositionObserver from '../../PositionObserver'
 import Canvas from './Canvas'
 import Video from './Video'
@@ -51,6 +53,34 @@ class VideoController extends Component {
     positions['videoController'] = node.offsetTop
     positions['viewportY'] = window.innerHeight
     PositionObserver.update(positions)
+
+    let timeline = new TimelineMax({
+      delay: 0.5,
+
+    })
+
+    let s0 = React.findDOMNode(this.refs['statement0'])
+    let s1 = React.findDOMNode(this.refs['statement1'])
+    let s2 = React.findDOMNode(this.refs['statement2'])
+    let s3 = React.findDOMNode(this.refs['statement3'])
+
+    const transitionIn = {
+      top: window.innerHeight / 2,
+      ease: Circ.easeOut
+    }
+
+    const transitionOut = {
+      top: window.innerHeight * -0.25,
+      ease: Circ.easeIn
+    }
+
+    const duration = .75
+    const delay = "+=1.25"
+
+    timeline.to(s0, duration, transitionIn, delay).to(s0, duration, transitionOut, delay)
+    timeline.to(s1, duration, transitionIn, delay).to(s1, duration, transitionOut, delay)
+    timeline.to(s2, duration, transitionIn, delay).to(s2, duration, transitionOut, delay)
+    timeline.to(s3, duration, transitionIn, delay).to(s3, duration, transitionOut, delay)
 
     this.screenShotVideo(null)
   }
@@ -140,6 +170,14 @@ class VideoController extends Component {
   }
 
   render () {
+    let statements = []
+
+    this.state.statements.forEach((statement, i) => {
+      statements.push(
+        <Statement ref={`statement${i}`} text={statement} />
+      )
+    })
+
     const style = {
       height: 5000,
       backgroundColor: 'orange',
@@ -148,13 +186,9 @@ class VideoController extends Component {
 
     return (
       <div ref='videoController' className='video-controller' style={style}>
-        <Canvas video={this.state.video} inView={this.state.canvasInView} canvasWidth={1320} canvasHeight={724} offsetY={this.state.offsetY} isPlaying={this.state.isPlaying} />
+        <Canvas video={this.state.video} inView={this.state.canvasInView} canvasWidth={this.state.windowWidth} canvasHeight={this.state.windowHeight} offsetY={this.state.offsetY} isPlaying={this.state.isPlaying} />
         <Video ref='video-componet' isPlaying={this.state.isPlaying} />
-
-        {this.state.statements.map((statement) => {
-          <Statement message={statement} />
-        })}
-
+        {statements}
         <SideMenu items={this.state.menuItems} />
       </div>
     )
