@@ -84,11 +84,19 @@ class VideoController extends Component {
 
     const scrollBottom = scrollTop + window.innerHeight
     const topVidController = this.state.positions.videoController
+    const bottomBoundary = this.state.positions.touch - this.state.windowHeight
 
-    if (scrollBottom > topVidController) {
-      let scrolledIntoView = scrollBottom - topVidController
+    // Order of these is specific to state, do not change
+    if (scrollTop > bottomBoundary) {
+      const scrolledInView = this.state.positions.touch - scrollTop
+
       this.setState({
-        canvasInView: scrolledIntoView
+        canvasInView: (scrolledInView >= 0) ? scrolledInView : 0
+      })
+    } else if (scrollBottom > topVidController) {
+      let scrolledInView = scrollBottom - topVidController
+      this.setState({
+        canvasInView: scrolledInView
       })
     } else {
       this.setState({
