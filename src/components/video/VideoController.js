@@ -1,16 +1,13 @@
 import React, { Component } from 'react'
-// import TimelineMax from 'gsap/src/minified/TimelineMax.min.js'
 import TimelineMax from 'gsap/src/uncompressed/TimelineMax.js'
 import PositionObserver from '../../PositionObserver'
+import ProgressObserver from '../../ProgressObserver'
 import Canvas from './Canvas'
 import Video from './Video'
 import SideMenu from './SideMenu'
 import Statement from './Statement'
 
-var statementScrollPos = 0
-var lastScrollPos
-var scrollTimer
-var timer
+var statementScrollPos = 0, lastScrollPos, timer
 const ViewportMetrics = require('react/lib/ViewportMetrics')
 
 class VideoController extends Component {
@@ -42,6 +39,32 @@ class VideoController extends Component {
   componentWillMount () {
     PositionObserver.subscribe((positions) => {
       this.setState({positions})
+    })
+
+    ProgressObserver.subscribe((i) => {
+      let progress = 0
+
+      switch (i) {
+        case 1:
+          progress = 0
+          break
+        case 2:
+          progress = 0.25
+          break
+        case 3:
+          progress = 0.5
+          break
+        case 4:
+          progress = 0.75
+          break
+        default:
+          progress = 0
+      }
+
+      console.log('progress', progress)
+
+      this.state.timeline.progress(progress)
+
     })
 
     this.setState({
@@ -77,12 +100,12 @@ class VideoController extends Component {
     }
 
     const duration = .75
-    const delay = "+=3"
+    const delay = '+=5'
 
-    timeline.to(s0, duration, transitionIn, delay).to(s0, duration, transitionOut, delay)
-    timeline.to(s1, duration, transitionIn, delay).to(s1, duration, transitionOut, delay)
-    timeline.to(s2, duration, transitionIn, delay).to(s2, duration, transitionOut, delay)
-    timeline.to(s3, duration, transitionIn, delay).to(s3, duration, transitionOut, delay)
+    timeline.to(s0, duration, transitionIn, '+=.5').to(s0, duration, transitionOut, delay)
+    timeline.to(s1, duration, transitionIn).to(s1, duration, transitionOut, delay)
+    timeline.to(s2, duration, transitionIn).to(s2, duration, transitionOut, delay)
+    timeline.to(s3, duration, transitionIn).to(s3, duration, transitionOut, delay)
 
     timeline.pause()
 
@@ -100,7 +123,6 @@ class VideoController extends Component {
   // bottomBoundary is optional
   screenShotVideo (bottomBoundary) {
     let vidComponent = this.refs['video-componet']
-    let videoNode = vidComponent.refs.video.getDOMNode()
 
     if (bottomBoundary && this.state.positions) {
       this.setState({
@@ -116,7 +138,7 @@ class VideoController extends Component {
   }
 
   canvasScrolling (scrollTop) {
-    if(!this.state.positions) {
+    if (!this.state.positions) {
       return
     }
 
@@ -145,7 +167,7 @@ class VideoController extends Component {
 
   statementScrolling (scrollPos) {
     // On scroll end event
-    if(timer) {
+    if (timer) {
       clearTimeout(timer)
     }
 
@@ -153,11 +175,11 @@ class VideoController extends Component {
       this.state.timeline.play()
     }, 150)
 
-    if(!this.state.positions) {
+    if (!this.state.positions) {
       return
     }
 
-    if(!lastScrollPos) {
+    if (!lastScrollPos) {
       lastScrollPos = scrollPos
     }
 
@@ -167,7 +189,7 @@ class VideoController extends Component {
     let bottomBoundary = this.state.positions.touch - this.state.windowHeight
 
     // math is not interger base so we reset the timeline when above the start
-    if(scrollPos < topBoundary) {
+    if (scrollPos < topBoundary) {
       this.state.timeline.restart()
       statementScrollPos = 0
     }
@@ -214,20 +236,20 @@ class VideoController extends Component {
 
     if (scrollTop > topBoundary && scrollTop < bottomBoundary) {
       // Only hit play once
-      if(!this.state.isPlaying) {
+      if (!this.state.isPlaying) {
         this.setState({
           isPlaying: true
         })
       }
     } else {
       // only pause once
-      if(this.state.isPlaying) {
+      if (this.state.isPlaying) {
         this.setState({
           isPlaying: false
         })
       }
 
-      if(scrollTop >= bottomBoundary) {
+      if (scrollTop >= bottomBoundary) {
         // Changes the absolute position of the canvas
         this.screenShotVideo(bottomBoundary)
       } else {
@@ -247,7 +269,7 @@ class VideoController extends Component {
 
     const style = {
       height: 5000,
-      backgroundColor: 'black',
+      backgroundColor: '#221F26',
       position: 'relative'
     }
 

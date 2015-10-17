@@ -60,7 +60,7 @@ class Header extends Component {
 
     switch (link) {
       case 'bind':
-        yPos = this.state.positions.home
+        yPos = 0
         break
       case 'video':
           yPos = this.state.positions.video

@@ -10,8 +10,15 @@ import Footer from './footer'
 class App extends Component {
   constructor (props) {
     super(props)
+    this.state = {}
 
     this.renderVideoSection = this.renderVideoSection.bind(this)
+  }
+
+  componentWillMount () {
+    this.setState({
+      //TODO add page dimensions here and pass into components
+    })
   }
 
   render () {
@@ -30,7 +37,7 @@ class App extends Component {
   renderVideoSection () {
     var vid
 
-    if(window.innerWidth > 768) {
+    if (window.innerWidth > 768) {
       vid = <VideoController />
     }
 

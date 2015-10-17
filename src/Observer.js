@@ -11,7 +11,7 @@ class Observer {
   subscribe (cb) {
     var hasSubscribed = false
 
-    if(cb instanceof Function) {
+    if (cb instanceof Function) {
       this._observers.push(cb)
       hasSubscribed = true
     } else {
@@ -24,7 +24,7 @@ class Observer {
   update (observable) {
     var hasUpdated = false
 
-    if(observable) {
+    if (observable) {
       this._observable = observable
       this.refresh()
       hasUpdated = true
@@ -32,11 +32,11 @@ class Observer {
       console.debug('Null observable')
     }
 
-    return hasUpdated;
+    return hasUpdated
   }
 
   refresh () {
-    if(this._observable) {
+    if (this._observable) {
       for (let observer of this._observers) {
         observer(this._observable)
       }

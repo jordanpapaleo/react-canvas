@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import ProgressObserver from '../../ProgressObserver'
 
 class SideMenu extends Component {
   static get propTypes () {
@@ -28,7 +29,7 @@ class SideMenu extends Component {
   }
 
   onClick (i) {
-    console.log('clicked ', i)
+    ProgressObserver.update(i)
   }
 
   render () {
@@ -47,10 +48,12 @@ class SideMenu extends Component {
     // ---------------------------
     let menuTexts = []
     this.props.items.forEach((item, i) => {
+      i = i + 1
+
       const textStyle= {
         position: 'absolute',
         right: 20,
-        top: this.state.sectionHeight * (i + 1),
+        top: this.state.sectionHeight * i,
         color: '#FFFFFF',
         cursor: 'pointer'
       }

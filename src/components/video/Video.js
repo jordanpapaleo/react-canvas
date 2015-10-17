@@ -42,7 +42,7 @@ class Video extends Component {
 
     return (
       <div className='videoContainer' id='videoContainer' style={containerStyle}>
-        <video ref='video' loop='loop' style={{width: '100%'}}>
+        <video ref='video' loop style={{width: '100%'}}>
           <source src={vidSrc} type='video/mp4' />
           Your browser does not support HTML5 video.
         </video>
