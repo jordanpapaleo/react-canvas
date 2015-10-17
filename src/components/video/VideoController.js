@@ -7,6 +7,8 @@ import Video from './Video'
 import SideMenu from './SideMenu'
 import Statement from './Statement'
 
+var statementScrollPos = 0
+var lastScrollPos;
 const ViewportMetrics = require('react/lib/ViewportMetrics')
 
 class VideoController extends Component {
@@ -31,6 +33,8 @@ class VideoController extends Component {
     this.onScroll = this.onScroll.bind(this)
     this.screenShotVideo = this.screenShotVideo.bind(this)
     this.canvasScrolling = this.canvasScrolling.bind(this)
+    this.statementScrolling = this.statementScrolling.bind(this)
+    this.menuScrolling = this.menuScrolling.bind(this)
   }
 
   componentWillMount () {
@@ -56,7 +60,6 @@ class VideoController extends Component {
 
     let timeline = new TimelineMax({
       delay: 0.5,
-
     })
 
     let s0 = React.findDOMNode(this.refs['statement0'])
@@ -75,12 +78,18 @@ class VideoController extends Component {
     }
 
     const duration = .75
-    const delay = "+=1.25"
+    const delay = "+=3"
 
     timeline.to(s0, duration, transitionIn, delay).to(s0, duration, transitionOut, delay)
     timeline.to(s1, duration, transitionIn, delay).to(s1, duration, transitionOut, delay)
     timeline.to(s2, duration, transitionIn, delay).to(s2, duration, transitionOut, delay)
     timeline.to(s3, duration, transitionIn, delay).to(s3, duration, transitionOut, delay)
+
+    timeline.pause()
+
+    this.setState({
+      timeline
+    })
 
     this.screenShotVideo(null)
   }
@@ -135,9 +144,54 @@ class VideoController extends Component {
     }
   }
 
+  statementScrolling (scrollPos) {
+    if(!this.state.positions) {
+      return
+    }
+
+    if(!lastScrollPos) {
+      lastScrollPos = scrollPos
+    }
+
+    this.state.timeline.pause()
+
+    let topBoundary = this.state.positions.videoController
+    let bottomBoundary = this.state.positions.touch - this.state.windowHeight
+
+    if (scrollPos > topBoundary && scrollPos < bottomBoundary) {
+      let scrollDistance = bottomBoundary - topBoundary
+      let scrollTick = 10 / scrollDistance
+
+      if (scrollPos >= lastScrollPos) {
+        statementScrollPos += scrollTick
+      } else if (scrollPos < lastScrollPos) {
+        statementScrollPos -= scrollTick
+      }
+
+      console.info(statementScrollPos)
+
+      if (statementScrollPos > 10) {
+        statementScrollPos = 10
+      } else if (statementScrollPos < 0) {
+        statementScrollPos = 0
+      }
+
+      this.state.timeline.progress(statementScrollPos)
+    } else {
+      this.state.timeline.pause()
+    }
+
+    lastScrollPos = scrollPos
+  }
+
+  menuScrolling () {
+
+  }
+
   onScroll (e) {
     let scrollTop = ViewportMetrics.currentScrollTop
     this.canvasScrolling(scrollTop)
+    this.statementScrolling(scrollTop)
 
     this.setState({ scrollTop })
 
@@ -174,13 +228,13 @@ class VideoController extends Component {
 
     this.state.statements.forEach((statement, i) => {
       statements.push(
-        <Statement ref={`statement${i}`} text={statement} />
+        <Statement ref={`statement${i}`} text={statement} isPlaying={this.state.isPlaying} />
       )
     })
 
     const style = {
       height: 5000,
-      backgroundColor: 'orange',
+      backgroundColor: 'black',
       position: 'relative'
     }
 

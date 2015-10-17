@@ -9,11 +9,6 @@ class Statement extends Component {
     message: ''
   }
 
-  constructor (props) {
-    super(props)
-    console.log(props)
-  }
-
   render () {
     const overlayStyle = {
       left: 0,
@@ -22,17 +17,20 @@ class Statement extends Component {
       zIndex: 2,
       top: window.innerHeight * 1.25,
       width: '100%',
-      // visibility: 'hidden'
+      backgrounColor: 'rgba(255,255,255,0)',
+      visibility: (this.props.isPlaying) ? 'visible' : 'hidden'
     }
 
-    let blar = window.innerWidth / 4
-
+    let blar = window.innerWidth / 2
 
     const statementStyle = {
       position: 'absolute',
       width: blar,
       marginLeft: `-${blar / 2}`,
-      left: '50%'
+      left: '50%',
+      color: '#FFFFFF',
+      fontSize: 36,
+      backgrounColor: 'rgba(255,255,255,0)'
     }
 
     return (

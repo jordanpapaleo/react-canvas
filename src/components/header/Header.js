@@ -82,7 +82,7 @@ class Header extends Component {
       window,
       1,
       {scrollTo: {y: window.scrollY}},
-      {scrollTo: {y: yPos}}
+      {scrollTo: {y: yPos, ease: Expo.easeInOut}}
     )
   }
 
