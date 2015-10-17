@@ -60,11 +60,7 @@ class VideoController extends Component {
         default:
           progress = 0
       }
-
-      console.log('progress', progress)
-
       this.state.timeline.progress(progress)
-
     })
 
     this.setState({
@@ -91,15 +87,15 @@ class VideoController extends Component {
 
     const transitionIn = {
       top: window.innerHeight / 2,
-      ease: Circ.easeOut
+      // ease: Circ.easeOut
     }
 
     const transitionOut = {
       top: window.innerHeight * -0.25,
-      ease: Circ.easeIn
+      // ease: Circ.easeIn
     }
 
-    const duration = .75
+    const duration = 0.75
     const delay = '+=5'
 
     timeline.to(s0, duration, transitionIn, '+=.5').to(s0, duration, transitionOut, delay)
@@ -167,14 +163,15 @@ class VideoController extends Component {
 
   statementScrolling (scrollPos) {
     // On scroll end event
-    if (timer) {
+    /* if (timer) {
       clearTimeout(timer)
+      //then play
     }
 
     timer = setTimeout(() => {
       this.state.timeline.play()
     }, 150)
-
+    */
     if (!this.state.positions) {
       return
     }
@@ -185,8 +182,8 @@ class VideoController extends Component {
 
     this.state.timeline.pause()
 
-    let topBoundary = this.state.positions.videoController
-    let bottomBoundary = this.state.positions.touch - this.state.windowHeight
+    const topBoundary = this.state.positions.videoController
+    const bottomBoundary = this.state.positions.touch - this.state.windowHeight
 
     // math is not interger base so we reset the timeline when above the start
     if (scrollPos < topBoundary) {
@@ -195,26 +192,33 @@ class VideoController extends Component {
     }
 
     if (scrollPos > topBoundary && scrollPos < bottomBoundary) {
-      let scrollDistance = bottomBoundary - topBoundary
-      let scrollTick = 10 / scrollDistance
+      // the physical pixel distance that needs to be covered during the timeline
+      const scrollDistance = bottomBoundary - topBoundary
+
+      // TimelineMax uses a time scale of 0 - 1
+      // tick is that percentage of time / the distance needed to cover
+      const scrollTick = 1 / scrollDistance
+
+      let scrollDiff = Math.abs(scrollPos - lastScrollPos)
+      let timelineDiff = scrollDiff * scrollTick
 
       // if scrolling up or down
       if (scrollPos >= lastScrollPos) {
-        statementScrollPos += scrollTick
+        statementScrollPos += timelineDiff
       } else if (scrollPos < lastScrollPos) {
-        statementScrollPos -= scrollTick
+        statementScrollPos -= timelineDiff
       }
 
       // set max and min scroll
-      if (statementScrollPos > 10) {
-        statementScrollPos = 10
+      if (statementScrollPos > 1) {
+        statementScrollPos = 1
       } else if (statementScrollPos < 0) {
         statementScrollPos = 0
       }
 
+      console.log('statement scroll', statementScrollPos)
+
       this.state.timeline.progress(statementScrollPos)
-    } else {
-      this.state.timeline.pause()
     }
 
     lastScrollPos = scrollPos
@@ -240,6 +244,7 @@ class VideoController extends Component {
         this.setState({
           isPlaying: true
         })
+        this.state.timeline.play()
       }
     } else {
       // only pause once

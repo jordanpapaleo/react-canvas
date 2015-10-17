@@ -41,8 +41,6 @@ class Canvas extends Component {
     const canvas = this.refs['canvas'].getDOMNode()
     const context = canvas.getContext('2d')
 
-    console.log('CDM', this.state.width, this.state.height)
-
     this.setState({
       canvas,
       context
@@ -72,8 +70,6 @@ class Canvas extends Component {
   }
 
   render () {
-    console.log(this.state.offsetX, this.state.offsetY)
-
     const style = {
       marginLeft: this.state.offsetX,
       marginTop: this.state.offsetY,
