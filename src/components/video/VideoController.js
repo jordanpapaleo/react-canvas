@@ -8,7 +8,9 @@ import SideMenu from './SideMenu'
 import Statement from './Statement'
 
 var statementScrollPos = 0
-var lastScrollPos;
+var lastScrollPos
+var scrollTimer
+var timer
 const ViewportMetrics = require('react/lib/ViewportMetrics')
 
 class VideoController extends Component {
@@ -39,7 +41,6 @@ class VideoController extends Component {
 
   componentWillMount () {
     PositionObserver.subscribe((positions) => {
-      console.log('VideoController', positions)
       this.setState({positions})
     })
 
@@ -145,6 +146,15 @@ class VideoController extends Component {
   }
 
   statementScrolling (scrollPos) {
+    // On scroll end event
+    if(timer) {
+      clearTimeout(timer)
+    }
+
+    timer = setTimeout(() => {
+      this.state.timeline.play()
+    }, 150)
+
     if(!this.state.positions) {
       return
     }
@@ -158,18 +168,24 @@ class VideoController extends Component {
     let topBoundary = this.state.positions.videoController
     let bottomBoundary = this.state.positions.touch - this.state.windowHeight
 
+    // math is not interger base so we reset the timeline when above the start
+    if(scrollPos < topBoundary) {
+      this.state.timeline.restart()
+      statementScrollPos = 0
+    }
+
     if (scrollPos > topBoundary && scrollPos < bottomBoundary) {
       let scrollDistance = bottomBoundary - topBoundary
       let scrollTick = 10 / scrollDistance
 
+      // if scrolling up or down
       if (scrollPos >= lastScrollPos) {
         statementScrollPos += scrollTick
       } else if (scrollPos < lastScrollPos) {
         statementScrollPos -= scrollTick
       }
 
-      console.info(statementScrollPos)
-
+      // set max and min scroll
       if (statementScrollPos > 10) {
         statementScrollPos = 10
       } else if (statementScrollPos < 0) {
