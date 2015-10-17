@@ -24,18 +24,24 @@ class SideMenu extends Component {
     }
 
     this.state.sectionHeight = this.state.height / this.state.sections
+    // this.onClick = this.onClick.bind(this)
+  }
+
+  onClick (i) {
+    console.log('clicked ', i)
   }
 
   render () {
-    console.log('state', this.state)
-
     const styles = {
       position: 'fixed',
       top: 0,
-      right: 15,
+      right: 20,
       height: this.state.height,
       zIndex: 3,
-      width: 125
+      width: 125,
+      fontSize: 12,
+      fontWeight: 700,
+      opacity: (this.props.isPlaying) ? 1 : 0
     }
 
     // ---------------------------
@@ -43,13 +49,14 @@ class SideMenu extends Component {
     this.props.items.forEach((item, i) => {
       const textStyle= {
         position: 'absolute',
-        right: 0,
+        right: 20,
         top: this.state.sectionHeight * (i + 1),
-        color: 'hotpink'
+        color: '#FFFFFF',
+        cursor: 'pointer'
       }
 
       menuTexts.push(
-        <div className='menu-text' key={i} ref={`menutext${i}`} style={textStyle}>
+        <div className='menu-text' key={i} ref={`menutext${i}`} style={textStyle} onClick={this.onClick.bind(true, i)}>
           {item}
         </div>
       )
@@ -59,9 +66,10 @@ class SideMenu extends Component {
     let menuTicks = []
     let tickCount = this.state.sections * this.state.ticksPerSection
     let tickOffset = this.state.height / tickCount
+    let i = 1
 
-    while (tickCount--) {
-      let size = 10
+    while (i <= tickCount) {
+      let size = 5
 
       const tickStyle= {
         position: 'absolute',
@@ -69,18 +77,16 @@ class SideMenu extends Component {
         borderRadius: '50%',
         width: size,
         height: size,
-        top: tickOffset * tickCount,
-        backgroundColor: 'hotpink'
+        top: tickOffset * i,
+        backgroundColor: '#FFFFFF'
       }
 
-      console.log('tick', tickCount)
-
       menuTicks.push(
-        <div className='menu-tick' key={tickCount} style={tickStyle}></div>
+        <div className='menu-tick' key={i} style={tickStyle}></div>
       )
-    }
 
-    console.log(menuTicks)
+      i++
+    }
 
     return (
       <div ref={'side-menu'} className='side-menu' style={styles}>

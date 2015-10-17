@@ -59,9 +59,7 @@ class VideoController extends Component {
     positions['viewportY'] = window.innerHeight
     PositionObserver.update(positions)
 
-    let timeline = new TimelineMax({
-      delay: 0.5,
-    })
+    let timeline = new TimelineMax()
 
     let s0 = React.findDOMNode(this.refs['statement0'])
     let s1 = React.findDOMNode(this.refs['statement1'])
@@ -258,7 +256,7 @@ class VideoController extends Component {
         <Canvas video={this.state.video} inView={this.state.canvasInView} canvasWidth={this.state.windowWidth} canvasHeight={this.state.windowHeight} offsetY={this.state.offsetY} isPlaying={this.state.isPlaying} />
         <Video ref='video-componet' isPlaying={this.state.isPlaying} />
         {statements}
-        <SideMenu items={this.state.menuItems} />
+        <SideMenu items={this.state.menuItems} isPlaying={this.state.isPlaying} />
       </div>
     )
   }

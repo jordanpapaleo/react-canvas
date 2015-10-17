@@ -10,6 +10,8 @@ import Footer from './footer'
 class App extends Component {
   constructor (props) {
     super(props)
+
+    this.renderVideoSection = this.renderVideoSection.bind(this)
   }
 
   render () {
@@ -17,12 +19,22 @@ class App extends Component {
       <div>
         <Header />
         <Home />
-        <VideoController />
+        {this.renderVideoSection()}
         <Touch />
         <Roadmap />
         <Footer />
       </div>
     )
+  }
+
+  renderVideoSection () {
+    var vid
+
+    if(window.innerWidth > 768) {
+      vid = <VideoController />
+    }
+
+    return vid
   }
 }
 
