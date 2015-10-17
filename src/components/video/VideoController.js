@@ -275,7 +275,7 @@ class VideoController extends Component {
 
     return (
       <div ref='videoController' className='video-controller' style={style}>
-        <Canvas video={this.state.video} inView={this.state.canvasInView} canvasWidth={this.state.windowWidth} canvasHeight={this.state.windowHeight} offsetY={this.state.offsetY} isPlaying={this.state.isPlaying} />
+        <Canvas video={this.state.video} inView={this.state.canvasInView} componentWidth={this.state.windowWidth} componentHeight={this.state.windowHeight} offsetY={this.state.offsetY} isPlaying={this.state.isPlaying} />
         <Video ref='video-componet' isPlaying={this.state.isPlaying} componentWidth={this.state.windowWidth} componentHeight={this.state.windowHeight} />
         {statements}
         <SideMenu items={this.state.menuItems} isPlaying={this.state.isPlaying} />

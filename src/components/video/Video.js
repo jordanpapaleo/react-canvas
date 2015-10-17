@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react'
+import {VIDEO_WIDTH, VIDEO_HEIGHT} from '../../constants/VideoConstants.js'
 
 class Video extends Component {
   static get propTypes () {
@@ -15,10 +16,7 @@ class Video extends Component {
 
   constructor (props) {
     super(props)
-    this.state = {
-      VID_WIDTH: 640,
-      VID_HEIGHT: 360
-    }
+    this.state = { VIDEO_WIDTH, VIDEO_HEIGHT }
 
     this.fullBleedVideo = this.fullBleedVideo.bind(this)
   }
@@ -52,15 +50,28 @@ class Video extends Component {
 
     const vidSrc = require('../../assets/bindmovie.mp4')
 
-    const ratio = this.state.VID_WIDTH / this.state.VID_HEIGHT
-    let videoWidth = ratio * this.props.componentWidth
-    let videoHeight = this.props.componentHeight
-    let videoOffset = videoWidth - this.props.componentWidth
+    const ratio = VIDEO_WIDTH / VIDEO_HEIGHT
+    const currentRatio = this.props.componentWidth / this.props.componentHeight
+    const isLandscape = (ratio < currentRatio)
+    let width, height, offsetX, offsetY
+
+    if (isLandscape) {
+      width = this.props.componentWidth
+      height = this.props.componentWidth / ratio
+      offsetX = (this.props.componentWidth - width) * -0.5
+      offsetY = 0
+    } else {
+      width = this.props.componentHeight * ratio
+      height = this.props.componentHeight
+      offsetX = 0
+      offsetY = (this.props.componentHeight - height)  * -0.5
+    }
 
     const videoStyle = {
-      width: videoWidth,
-      height: videoHeight,
-      marginLeft: videoOffset * -0.5
+      width,
+      height,
+      marginLeft: offsetX,
+      marginTop: offsetY
     }
 
     return (

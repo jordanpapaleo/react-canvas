@@ -1,10 +1,33 @@
 import React, { Component } from 'react'
+import {VIDEO_WIDTH, VIDEO_HEIGHT} from '../../constants/VideoConstants.js'
 
 class Canvas extends Component {
   constructor (props) {
     super(props)
 
-    this.state = {}
+    const ratio = VIDEO_WIDTH / VIDEO_HEIGHT
+    const currentRatio = this.props.componentWidth / this.props.componentHeight
+    const isLandscape = (ratio < currentRatio)
+    let width, height, offsetX, offsetY, x, y
+
+    if (isLandscape) {
+      width = this.props.componentWidth
+      height = this.props.componentWidth / ratio
+      offsetX = 0
+      offsetY = (this.props.componentHeight - height) * 0.5
+      x = (width / 2)
+      y = height / 2
+    } else {
+      width = this.props.componentHeight * ratio
+      height = this.props.componentHeight
+      offsetX = (this.props.componentWidth - width)  * 0.5
+      offsetY = 0
+      x = width / 2
+      y = (height / 2)
+    }
+
+
+    this.state = { VIDEO_WIDTH, VIDEO_HEIGHT, width, height, offsetX, offsetY, x, y }
 
     /*
     - Canvas width and height same as video and passed in as props
@@ -18,13 +41,11 @@ class Canvas extends Component {
     const canvas = this.refs['canvas'].getDOMNode()
     const context = canvas.getContext('2d')
 
+    console.log('CDM', this.state.width, this.state.height)
+
     this.setState({
       canvas,
-      context,
-      width: canvas.clientWidth,
-      height: canvas.clientHeight,
-      x: canvas.clientWidth / 2,
-      y: canvas.clientHeight / 2
+      context
     })
   }
 
@@ -38,7 +59,6 @@ class Canvas extends Component {
 
     if (this.state.video && this.props.inView) {
       const { context, video, width, height, x, y } = this.state
-
       let r = this.props.inView
 
       context.save()
@@ -52,7 +72,11 @@ class Canvas extends Component {
   }
 
   render () {
+    console.log(this.state.offsetX, this.state.offsetY)
+
     const style = {
+      marginLeft: this.state.offsetX,
+      marginTop: this.state.offsetY,
       position: (this.props.isPlaying) ? 'fixed' : 'absolute',
       top: this.props.offsetY,
       left: 0,
@@ -61,7 +85,7 @@ class Canvas extends Component {
     }
 
     return (
-      <canvas ref='canvas' width={this.props.canvasWidth} height={this.props.canvasHeight} style={style} />
+      <canvas ref='canvas' style={style} width={this.state.width} height={this.state.height} />
     )
   }
 }
