@@ -2,11 +2,15 @@ import React, { Component, PropTypes } from 'react'
 
 class Statement extends Component {
   static get propTypes () {
-    message: PropTypes.string.isRequired
+    return {
+      message: PropTypes.string.isRequired
+    }
   }
 
   static get defaultProps () {
-    message: ''
+    return {
+      message: ''
+    }
   }
 
   render () {

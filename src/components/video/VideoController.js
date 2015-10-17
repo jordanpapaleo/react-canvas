@@ -241,10 +241,9 @@ class VideoController extends Component {
 
   render () {
     let statements = []
-
     this.state.statements.forEach((statement, i) => {
       statements.push(
-        <Statement ref={`statement${i}`} text={statement} isPlaying={this.state.isPlaying} />
+        <Statement key={i} ref={`statement${i}`} text={statement} isPlaying={this.state.isPlaying} />
       )
     })
 

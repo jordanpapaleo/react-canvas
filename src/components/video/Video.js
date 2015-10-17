@@ -2,11 +2,15 @@ import React, { Component, PropTypes } from 'react'
 
 class Video extends Component {
   static get propTypes () {
-    isPlaying: PropTypes.bool.isRequired
+    return {
+      isPlaying: PropTypes.bool.isRequired
+    }
   }
 
   static get defaultProps () {
-    isPlaying: undefined
+    return {
+      isPlaying: undefined
+    }
   }
 
   constructor (props) {

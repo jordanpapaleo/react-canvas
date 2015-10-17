@@ -6,7 +6,6 @@ class Canvas extends Component {
 
     this.state = {}
 
-
     /*
     - Canvas width and height same as video and passed in as props
     - Visibility goes hidden on the same event that shows the video
@@ -31,13 +30,13 @@ class Canvas extends Component {
 
   componentWillReceiveProps (props) {
     // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation
-    if(!this.state.video && this.props.video) {
+    if (!this.state.video && this.props.video) {
       this.setState({
         video: this.props.video.getDOMNode()
       })
     }
 
-    if(this.state.video && this.props.inView) {
+    if (this.state.video && this.props.inView) {
       const { context, video, width, height, x, y } = this.state
 
       let r = this.props.inView

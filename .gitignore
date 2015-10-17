@@ -1,6 +1,7 @@
 # Logs
 logs
 *.log
+.git
 
 # Dependency directory
 node_modules
