@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import TimelineMax from 'gsap/src/uncompressed/TimelineMax.js'
+import TweenMax from 'gsap/src/minified/TweenMax.min.js'
 import PositionObserver from '../../PositionObserver'
 import ProgressObserver from '../../ProgressObserver'
 import Canvas from './Canvas'
@@ -49,7 +50,7 @@ class VideoController extends Component {
     this.onScroll = this.onScroll.bind(this)
     this.screenShotVideo = this.screenShotVideo.bind(this)
     this.canvasScrolling = this.canvasScrolling.bind(this)
-    this.statementScrolling = this.statementScrolling.bind(this)
+    this.timelineScrolling = this.timelineScrolling.bind(this)
     this.menuScrolling = this.menuScrolling.bind(this)
     this.initTimeline = this.initTimeline.bind(this)
 
@@ -102,15 +103,25 @@ class VideoController extends Component {
     PositionObserver.update(positions)
 
     this.initTimeline()
+    this.screenShotVideo(null)
   }
 
   initTimeline () {
-    let timeline = new TimelineMax()
+    // http://greensock.com/docs/#/HTML5/GSAP/TimelineMax/
+    let timeline = new TimelineMax({
+      delay: 0.5,
+      paused: true,
+    })
 
     let s0 = React.findDOMNode(this.refs['statement0'])
     let s1 = React.findDOMNode(this.refs['statement1'])
     let s2 = React.findDOMNode(this.refs['statement2'])
     let s3 = React.findDOMNode(this.refs['statement3'])
+
+    this.statements = {
+      queued: [s0, s1, s2, s3],
+      shown: []
+    }
 
     const transitionIn = {
       top: window.innerHeight / 2,
@@ -123,20 +134,27 @@ class VideoController extends Component {
     }
 
     const duration = 0.75
-    const delay = '+=5'
+    const delay = '+=2'
 
-    timeline.to(s0, duration, transitionIn, '+=.5').to(s0, duration, transitionOut, delay)
+    timeline.pause()
+
+    // timeline.add()
+
+    timeline.addCallback(()=> {
+      console.log('callback')
+    })
+    timeline.to(s0, duration, transitionIn).to(s0, duration, transitionOut, delay)
     timeline.to(s1, duration, transitionIn).to(s1, duration, transitionOut, delay)
     timeline.to(s2, duration, transitionIn).to(s2, duration, transitionOut, delay)
     timeline.to(s3, duration, transitionIn).to(s3, duration, transitionOut, delay)
 
-    timeline.pause()
+    setTimeout(() => {
+      // timeline.play()
+    }, 500)
 
     this.setState({
       timeline
     })
-
-    this.screenShotVideo(null)
   }
 
   componentWillUnmount () {
@@ -188,7 +206,80 @@ class VideoController extends Component {
     }
   }
 
-  statementScrolling (scrollPos) {
+  timelineScrolling (scrollPos) {
+    const statementCount = this.statements.queued.length
+    const topBoundary = this.state.positions.videoController
+    const bottomBoundary = this.state.positions.touch - this.state.windowHeight
+    const activeDistance = bottomBoundary - topBoundary
+    const tick = activeDistance / (statementCount + 1)
+    // console.log(topBoundary, scrollPos, bottomBoundary)
+    // console.log(scrollPos, tick)
+
+    let direction = 'down'
+    if (!lastScrollPos) {
+      lastScrollPos = 0
+    }
+
+    if (lastScrollPos <= scrollPos) {
+      direction = 'down'
+    } else if (lastScrollPos > scrollPos) {
+      direction = 'up'
+    }
+
+    console.log(lastScrollPos, scrollPos, direction)
+
+    if (scrollPos < topBoundary) {
+      // Before we show the statements
+    } else if (scrollPos >= topBoundary && scrollPos <= bottomBoundary) {
+      let node
+
+      // Showing the statements
+      if (scrollPos > tick * 4 + topBoundary) {
+        console.warn('4')
+        node = this.statements.queued[3]
+      } else if (scrollPos > tick * 3 + topBoundary) {
+        console.warn('3')
+        node = this.statements.queued[2]
+      } else if (scrollPos > tick * 2 + topBoundary) {
+        console.warn('2')
+        node = this.statements.queued[1]
+      } else if (scrollPos > tick + topBoundary) {
+        console.warn('1')
+        node = this.statements.queued[0]
+      }
+
+      const transitionIn = { top: window.innerHeight / 2, ease: Circ.easeOut }
+      const transitionOutUp = { top: window.innerHeight * -0.25, ease: Circ.easeIn }
+      const transitionOutDown = { top: window.innerHeight * 1.25, ease: Circ.easeIn }
+      const delay = 2
+      const duration = 1
+
+      if (node && direction === 'down') {
+        console.log('transition up')
+        transitionOutUp.delay = delay
+        TweenMax.to(node, duration, transitionIn)
+        TweenMax.to(node, duration, transitionOutUp)
+      } else if (node && direction === 'up') {
+        console.log('transition down')
+        transitionOutDown.delay = delay
+        TweenMax.to(node, duration, transitionIn, delay)
+        TweenMax.to(node, duration, transitionOutDown)
+      }
+    } else if (scrollPos > bottomBoundary) {
+      // After we show the statements
+    }
+
+    lastScrollPos = scrollPos
+
+
+    // YOU ARE HERE AND YOU ARE WORKING ON ANIMATING THE TEXT WITHOUT A TIMELINE
+
+
+    /*var body = document.body, html = document.documentElement;
+    var docHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight );*/
+
+    // this.state.timeline.progress(scrollPos / (docHeight - window.innerHeight))
+
     // On scroll end event
     /* if (timer) {
       clearTimeout(timer)
@@ -198,7 +289,7 @@ class VideoController extends Component {
       this.state.timeline.play()
     }, 150)
     */
-    if (!this.state.positions) {
+    /*if (!this.state.positions) {
       return
     }
 
@@ -247,17 +338,15 @@ class VideoController extends Component {
       this.state.timeline.progress(statementScrollPos)
     }
 
-    lastScrollPos = scrollPos
+    lastScrollPos = scrollPos*/
   }
 
-  menuScrolling () {
-
-  }
+  menuScrolling () {}
 
   onScroll (e) {
     let scrollTop = ViewportMetrics.currentScrollTop
     this.canvasScrolling(scrollTop)
-    this.statementScrolling(scrollTop)
+    this.timelineScrolling(scrollTop)
 
     this.setState({ scrollTop })
 
@@ -289,9 +378,8 @@ class VideoController extends Component {
     }
   }
 
+  // Callback passed to Video.js
   videoDone () {
-    console.info('Video done from parent', this.state)
-
     window.scrollTo(0, this.state.positions.touch - window.innerHeight)
 
     this.setState({

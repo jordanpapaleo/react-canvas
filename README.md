@@ -15,5 +15,6 @@
 - https://www.npmjs.com/package/react-spark-scroll
 - https://cdn.rawgit.com/feross/standard/master/badge.svg
 - https://github.com/feross/standard
+- https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation
 
 [![js-standard-style](https://cdn.rawgit.com/feross/standard/master/badge.svg)](https://github.com/feross/standard)

@@ -20,7 +20,7 @@ class Statement extends Component {
       marginLeft: 0,
       position: 'fixed',
       top: window.innerHeight * 1.25,
-      visibility: (this.props.isPlaying) ? 'visible' : 'hidden',
+      // visibility: (this.props.isPlaying) ? 'visible' : 'hidden',
       width: '100%',
       zIndex: 2
     }
@@ -29,7 +29,7 @@ class Statement extends Component {
 
     const statementStyle = {
       backgrounColor: 'rgba(255,255,255,0)',
-      color: '#FFFFFF',
+      color: 'hotpink',
       fontSize: 36,
       left: '50%',
       marginLeft: `-${blar / 2}`,
