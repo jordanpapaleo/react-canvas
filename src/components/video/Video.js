@@ -13,10 +13,14 @@ class Video extends Component {
 
   componentDidMount () {
     this.video = this.refs['video'].getDOMNode()
+    this.video.onended = () => {
+      this.props.completeHandler()
+    }
   }
 
   render () {
-    const vidSrc = require('../../assets/bindmovie.mp4')
+    // const vidSrc = require('../../assets/bindmovie.mp4')
+    const vidSrc = require('../../assets/small.mp4')
 
     if (this.props.isPlaying && this.video) {
       this.video.play()

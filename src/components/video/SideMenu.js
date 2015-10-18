@@ -42,7 +42,7 @@ class SideMenu extends Component {
       width: 125,
       fontSize: 12,
       fontWeight: 700,
-      opacity: (this.props.isPlaying) ? 1 : 0
+      visibility: (this.props.isPlaying) ? 'visible' : 'hidden'
     }
 
     // ---------------------------

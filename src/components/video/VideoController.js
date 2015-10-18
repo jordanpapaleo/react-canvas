@@ -52,6 +52,8 @@ class VideoController extends Component {
     this.statementScrolling = this.statementScrolling.bind(this)
     this.menuScrolling = this.menuScrolling.bind(this)
     this.initTimeline = this.initTimeline.bind(this)
+
+    this.videoDone = this.videoDone.bind(this)
   }
 
   componentWillMount () {
@@ -287,6 +289,16 @@ class VideoController extends Component {
     }
   }
 
+  videoDone () {
+    console.info('Video done from parent', this.state)
+
+    window.scrollTo(0, this.state.positions.touch - window.innerHeight)
+
+    this.setState({
+      isPlaying: false
+    })
+  }
+
   render () {
     let statements = []
     this.state.statements.forEach((statement, i) => {
@@ -296,7 +308,7 @@ class VideoController extends Component {
     })
 
     const style = {
-      height: 5000,
+      height: 2000,
       backgroundColor: '#221F26',
       position: 'relative',
       overflow: 'hidden'
@@ -305,7 +317,13 @@ class VideoController extends Component {
     return (
       <div ref='videoController' className='video-controller' style={style}>
         <Canvas video={this.state.video} inView={this.state.canvasInView} componentWidth={this.props.windowWidth} componentHeight={this.props.windowHeight} offsetY={this.state.offsetY} isPlaying={this.state.isPlaying} />
-        <Video ref='video-componet' isPlaying={this.state.isPlaying} componentWidth={this.props.windowWidth} componentHeight={this.props.windowHeight} />
+        <Video
+          ref='video-componet'
+          isPlaying={this.state.isPlaying}
+          componentWidth={this.props.windowWidth}
+          componentHeight={this.props.windowHeight}
+          completeHandler={this.videoDone}
+          />
         {statements}
         <SideMenu items={this.state.menuItems} isPlaying={this.state.isPlaying} />
       </div>

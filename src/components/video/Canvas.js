@@ -27,6 +27,7 @@ class Canvas extends Component {
   }
 
   componentWillReceiveProps (props) {
+    console.info('CWRP', props)
     // https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation
     if (!this.state.video && this.props.video) {
       this.setState({
