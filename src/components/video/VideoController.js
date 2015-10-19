@@ -254,6 +254,9 @@ class VideoController extends Component {
       const delay = 2
       const duration = 1
 
+      // YOU ARE HERE AND YOU ARE WORKING ON ANIMATING THE TEXT WITHOUT A TIMELINE
+      // Only transition if needed
+
       if (node && direction === 'down') {
         console.log('transition up')
         transitionOutUp.delay = delay
@@ -272,7 +275,7 @@ class VideoController extends Component {
     lastScrollPos = scrollPos
 
 
-    // YOU ARE HERE AND YOU ARE WORKING ON ANIMATING THE TEXT WITHOUT A TIMELINE
+
 
 
     /*var body = document.body, html = document.documentElement;
